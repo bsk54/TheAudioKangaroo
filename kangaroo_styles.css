@@ -1,0 +1,879 @@
+:root {
+    /* Layout Variables */
+    --reserved-right-width: 70px; /* Reserved space for buttons */
+    
+    /* Color Variables for Light Mode */
+    --background-color: #f5f5f5;
+    --text-color: #333;
+    --header-background: rgba(255, 235, 59, 0.3);
+    --button-background: rgba(255, 235, 59, 0.15);
+    --button-hover-background: rgba(255, 235, 59, 0.3);
+    --modal-background: rgba(0,0,0,0.5);
+    --modal-content-background: #fff;
+    --audio-player-bg-color: rgba(245, 245, 245, 0.8); /* Updated to match var(--background-color) */
+    --audio-file-name-color: #333; /* Color for audio file name in light mode */
+    --mode-indicator-green: green;
+    --mode-indicator-red: red;
+    
+    /* Specific Styles for the MP3 Button */
+    --button-red-bg: #FF0000;
+    --button-red-hover-bg: #CC0000;
+    --button-red-text: #FFFFFF;
+}
+
+.night-mode {
+    /* Color Variables for Night Mode */
+    --background-color: #121212;
+    --text-color: #e0e0e0;
+    --header-background: rgba(0, 0, 0, 0.7);
+    --button-background: rgba(100, 100, 100, 0.2);
+    --button-hover-background: rgba(100, 100, 100, 0.4);
+    --modal-background: rgba(255,255,255,0.1);
+    --modal-content-background: #1e1e1e;
+    --audio-player-bg-color: rgba(18, 18, 18, 0.8); /* Dark background for audio player in night mode */
+    --audio-file-name-color: #e0e0e0;
+    
+    /* If you want the MP3 button to change in night mode, uncomment the below lines */
+    --button-red-bg: #832F2F;  /* a32F2F Optional: Darker red */
+    --button-red-hover-bg: #B71C1C;  /* Optional: Even darker red */
+    --button-red-text: #FFFFFF;  /* White text remains the same */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: courier;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--header-background);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    font-size: 24px;
+    font-family: courier;
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+#audio-file-name {
+    font-family: courier;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    margin-top: 5px;
+    color: var(--audio-file-name-color);
+    word-break: break-all;
+}
+
+.night-mode #audio-file-name {
+    color: var(--audio-file-name-color);
+}
+
+.header-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.button {
+    background-color: var(--button-background);
+    border: none;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 45px;
+    height: 45px;
+    font-size: 12px;
+    font-family: courier;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+    background-color: var(--button-hover-background);
+    transform: scale(1.05);
+}
+
+.button-red {
+    background-color: #FF0000;
+    color: #FFFFFF;
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-red:hover {
+    background-color: #CC0000;
+    transform: scale(1.05);
+}
+
+.button-red:focus {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 2px;
+}
+
+
+main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+#file-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#file-inputs input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#bottom-buttons {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 200;
+}
+
+#left-buttons {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+}
+
+/* Position the right-buttons at the bottom right corner */
+#right-buttons {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column; /* stack vertically */
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 200;
+}
+
+/* Optional: Adjust button sizes if needed */
+#right-buttons .button {
+    width: 45px;
+    height: 45px;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* If you want smaller buttons on smaller screens */
+@media (max-width: 786px) {
+    #right-buttons .button {
+        width: 40px;
+        height: 40px;
+        font-size: 10px;
+    }
+}
+
+
+/* Removed #speed-slider and related styles as sliders are no longer used */
+
+.button {
+    /* Existing styles remain unchanged */
+}
+
+/* Removed .slider-container and all related styles */
+
+/* Removed speed-slider-landscape styles */
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-background);
+    transition: background-color 0.3s;
+}
+
+.modal-content {
+    background-color: var(--modal-content-background);
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.night-mode .modal-content {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+/* Mode Indicator Light Styles */
+.mode-indicator {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--mode-indicator-green); /* Default to Continuous Mode */
+    margin-left: 8px;
+    vertical-align: middle;
+    border: 2px solid #fff;
+    box-shadow: 0 0 2px rgba(0,0,0,0.5);
+    transition: background-color 0.3s ease;
+}
+
+/* Cont./Loop Mode Button Specific Styles */
+#cont-loop-toggle {
+    background-color: #2196F3; /* Blue */
+}
+
+#cont-loop-toggle:hover {
+    background-color: #0b7dda;
+}
+
+/* Responsive Design for Buttons */
+#right-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Removed .slider-container as sliders are no longer used */
+
+/* Cont./Loop Mode Button and Mode Indicator Integration */
+#cont-loop-toggle + .mode-indicator {
+    margin-left: 0; /* Adjust spacing if necessary */
+}
+
+/* Mode Indicator Colors */
+.mode-indicator.continuous {
+    background-color: var(--mode-indicator-green);
+}
+
+.mode-indicator.loop {
+    background-color: var(--mode-indicator-red);
+}
+
+/* Lesson Display Styles */
+#lesson-display {
+    background-color: #f0f0f0;
+    padding: 3px;
+    margin: 5px;
+    border-radius: 5px;
+    overflow: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Example CSS */
+#lesson-table {
+    font-size: 16px; /* Default font size */
+}
+
+#font-family-indicator {
+    font-size: 16px;
+    color: #555;
+    vertical-align: middle;
+}
+
+
+.night-mode #lesson-display {
+    background-color: #1e1e1e;
+}
+
+#lesson-display table, #lesson-display th, #lesson-display td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+#lesson-display th {
+    background-color: #f2f2f2;
+}
+
+/* Night mode table styles */
+.night-mode table, 
+.night-mode th, 
+.night-mode td {
+    border-color: #555;
+}
+
+.night-mode th {
+    background-color: #444; /* Darker shade for thead */
+    color: #e0e0e0;
+}
+
+.night-mode td {
+    background-color: #1e1e1e; /* Base background for odd rows in tbody */
+    color: #e0e0e0;
+}
+
+/* Alternating row colors for tbody */
+.night-mode #lesson-display tbody tr:nth-child(even) {
+    background-color: #2a2a2a; /* Slightly lighter shade for even rows */
+}
+
+
+/* Alternating row colors */
+#lesson-display tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.night-mode #lesson-display tbody tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+
+/* Audio Player Styles */
+#audio-player {
+    width: calc(100% - var(--reserved-right-width));
+    margin-right: var(--reserved-right-width);
+    height: 15px;
+    border: 0px solid #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 20px;
+    box-sizing: border-box;
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(var(--audio-player-bg-color), 0.8);
+    padding: 0px;
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#audio-player audio {
+    transform: scale(0.7);
+    transform-origin: center;
+}
+
+/* Removed #lesson-content and #lesson-frame as they seem redundant */
+
+/* Landscape Mode Styles */
+.landscape-mode #night-mode-toggle,
+.landscape-mode #top-buttons,
+.landscape-mode #left-buttons,
+.landscape-mode #right-buttons,
+.landscape-mode #bottom-buttons {
+    display: none;
+}
+
+.landscape-mode #landscape-controls {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    gap: 15px;
+    z-index: 300;
+    align-items: center;
+    width: var(--reserved-right-width);
+}
+
+#landscape-controls {
+    display: none;
+    width: var(--reserved-right-width);
+}
+
+.landscape-mode,
+#landscape-controls {
+    transition: all 0.3s ease-in-out;
+}
+
+#landscape-controls .button {
+    width: 50px;
+    height: 50px;
+    font-size: 14px;
+    text-align: center;
+}
+
+#landscape-controls .button:hover {
+    transform: scale(1.05);
+}
+
+#landscape-controls .mode-indicator {
+    /* If specific styles are needed for landscape mode indicators */
+}
+
+.landscape-mode #landscape-controls .button {
+    /* Ensure landscape buttons inherit the same styles */
+}
+
+/* Removed any residual slider-related styles */
+
+/* Additional Responsive Adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-buttons {
+        margin-top: 10px;
+    }
+
+    #top-buttons {
+        top: 70px;
+    }
+
+    #bottom-buttons {
+        bottom: 140px;
+    }
+
+    #audio-player {
+        bottom: 10px;
+    }
+
+    #top-buttons,
+    #bottom-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .landscape-next-button,
+    .landscape-prev-button,
+    .landscape-startpause-button {
+        display: none;
+    }
+}
+
+@media (orientation: landscape) and (max-width: 1024px) {
+    /* Flexbox handles height adjustments */
+}
+
+/* Ensuring audio controls are visible */
+audio::-webkit-media-controls-timeline {
+    display: block;
+}
+
+audio::-moz-media-controls-timeline {
+    display: block;
+}
+	
+	
+	
+.expanded-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.expanded-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.expanded-overlay img {
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.expanded-overlay img:hover {
+  transform: scale(1.05);
+}
+
+
+
+
+/* ============================= */
+/* HEADER CONTAINER STYLES       */
+/* ============================= */
+
+/* Default header container (for larger screens) */
+.header-container {
+  width: 100%;
+  max-width: 1024px;
+  height: 191px; /* Fixed height for larger screens */
+  margin: 20px auto;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* For smaller screens, reduce header height and margins */
+@media (max-width: 600px) {
+  .header-container {
+    height: 30vh; /* Use viewport units for responsiveness */
+    margin: 10px auto; /* Reduce vertical margin */
+  }
+
+  .header-container img {
+    border-radius: 5px; /* Slightly smaller corner radius on small screens */
+  }
+}
+
+
+/* ============================= */
+/* TOP-BUTTONS STYLES            */
+/* ============================= */
+
+/* Default #top-buttons (for larger screens) */
+#top-buttons {
+  position: fixed;
+  top: 245px; /* Adjust this value as needed */
+  left: 50%;
+  font-size: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;   /* Keep buttons aligned horizontally */
+  align-items: center;   /* Vertically center the buttons */
+  gap: 10px;
+  z-index: 300;          /* Increase if buttons appear behind other elements */
+}
+
+/* Ensure #top-buttons' individual .button elements do not shrink 
+   and have a default small size on large screens */
+#top-buttons .button {
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  font-size: 12px;
+}
+
+/* Media query for narrower screens (up to 786px wide) */
+@media (max-width: 786px) {
+  #top-buttons {
+    top: 255px; /* Adjust if needed for small screens */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Already set to flex row alignment with gap and center alignment */
+  }
+
+  /* Increase padding and font size for buttons on smaller screens 
+     if you want them more finger-friendly smartphone*/
+  #top-buttons .button {
+    padding: 20px;   /* Increase padding for better tap targets */
+    font-size: 12px; /* Slightly larger text for readability */
+  }
+}
+
+	
+	
+@media (min-width: 787px) {
+  /* Show all buttons in larger screens */
+  #top-buttons .button {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 786px) {
+  /* Maybe hide some less critical buttons on smaller screens */
+  #top-buttons #font-toggle,
+  #top-buttons #pause-toggle {
+    display: none;
+  }
+}	
+
+
+
+
+
+
+/* Modal Overlay */
+/* General Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Semi-transparent background */
+    overflow: auto;
+    font-family: courier, monospace;
+    transition: opacity 0.3s ease;
+}
+
+/* Modal Content */
+.modal-content {
+    position: absolute;
+    bottom: 20%; /* Positioned 10% from the bottom for better visibility */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--modal-content-background);
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 400px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    line-height: 1.5;
+    color: var(--text-color);
+    transition: background-color 0.3s ease;
+}
+
+/* Close Button */
+.close-button {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #333;
+    text-decoration: none;
+}
+
+/* Modal Headings */
+.modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.modal-content h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Instructions */
+.modal-content p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Input Fields and Select Options */
+.modal-content input[type="file"],
+.modal-content select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    transition: border 0.3s ease;
+}
+
+.modal-content input[type="file"]:hover,
+.modal-content select:hover {
+    border-color: #999;
+}
+
+/* Load MP3 Button */
+#load-selected-mp3 {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: var(--mode-indicator-green);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+#load-selected-mp3:hover {
+    background-color: var(--mode-indicator-green);
+    transform: scale(1.02);
+}
+
+/* Additional Spacing for Modal Elements */
+.modal-content div {
+    margin-bottom: 20px;
+}
+
+.modal-content h3 + input,
+.modal-content h3 + select {
+    margin-top: 10px;
+}
+
+
+#open-modal-button {
+    background-color: var(--button-red-bg);
+    color: var(--button-red-text);
+    border: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#open-modal-button:hover {
+    background-color: var(--button-red-hover-bg);
+    transform: scale(1.05);
+}
+
+#open-modal-button:focus {
+    outline: 2px solid var(--button-red-text);
+    outline-offset: 2px;
+}
+
+
+/* File Selector Styling */
+input[type="file"]::file-selector-button {
+    background: var(--button-background);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: var(--button-hover-background);
+}
+
+/* Make Modal Visible When Active */
+.modal.show {
+    display: block;
+    opacity: 1;
+}
+
+/* Night Mode for Modal */
+.night-mode .modal-content {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+.night-mode .close-button {
+    color: #e0e0e0;
+}
+
+/* Ensure Audio Button Looks Like It Belongs to Modal */
+#audio-file-button {
+    background-color: var(--button-background);
+    color: var(--text-color);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+#audio-file-button:hover {
+    background-color: var(--button-hover-background);
+    transform: scale(1.1);
+}
+
+/* Responsive Adjustments for Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 90%;
+    }
+
+    #load-selected-mp3 {
+        font-size: 12px;
+    }
+}
+
+
+/* Add these styles to your existing CSS */
+
+.rtl-text {
+    text-align: right;
+    direction: rtl;
+}
+
+.ltr-text {
+    text-align: left;
+    direction: ltr;
+}

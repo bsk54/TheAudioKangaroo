@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--****************************************************************************************************-->
+<!--*************************************** The Audio Kangaroo *****************************************-->
+<!--**************************************** December 17, 2024 *****************************************-->
+<!--****************************************************************************************************-->
+<!--****************************************** Version 1.01 ********************************************-->
+<!--**************************************** December 17, 2024 *****************************************-->
+<!--****************************************************************************************************-->
+<!-------------------------------------------------------------------------------------------------------->
+<!------------------------------------ Code by: Bernd Sebastian Kamps ------------------------------------>
+<!-------------------------------------------------------------------------------------------------------->
+<!-- Description: The Audio Kangaroo is a web-based language learning platform that                     -->
+<!-- integrates educational texts with corresponding audio and up to 20 translations.                   -->
+<!--****************************************************************************************************-->
+<!-- Repository: https://github.com/bsk54/TheAudioKangaroo.git ------------------------------------------->
+<!-- Web site: https://aioPop.com/kangaroo --------------------------------------------------------------->
+<!--****************************************************************************************************-->
+<!--****************************************************************************************************-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Audio Kangaroo</title>
+
+    <link rel="stylesheet" href="kangaroo_styles.css">
+</head>
+<body>
+    <header>
+	    <div class="header-container" id="headerImageContainer">
+        <img src="AudioKangaroo.jpg" alt="Header Image" id="headerImage">
+    </div>
+        <div style="display: flex; flex-direction: column;">
+            <h1 id="title"><!--The Audio Kangaroo--></h1>
+            <div id="audio-file-name">No audio file loaded.</div>
+        </div>
+        <div class="header-buttons">
+            <!-- Additional header buttons can be added here -->
+        </div>
+    </header>
+
+    <!-- Header Image Container -->
+
+
+    <!-- Overlay for Enlarged Image -->
+    <div class="expanded-overlay" id="imageOverlay">
+        <img src="" alt="Enlarged Image" id="enlargedImage">
+    </div>
+
+    <main>
+        <div id="top-buttons">
+            <section id="file-inputs" style="display: flex; align-items: center; gap: 10px;">
+
+
+				
+				
+        <label id="open-modal-button" class="button" title="Upload Audio File" aria-label="Upload Audio File">MP3</label>
+
+
+
+				
+                <button id="snippet-counter-button" class="button" title="Number of snippets" aria-label="Number of snippets">0/0</button>
+                <button id="night-mode-toggle" class="button" title="Toggle Night Mode" aria-label="Toggle Night Mode">🌙</button>
+            </section>
+        </div>
+
+        <section id="audio-player" style="margin-top: 20px;">
+            <audio id="audio" controls style="width: 100%; max-width: 600px;"></audio>
+        </section>
+
+        <section id="command-buttons" style="margin-top: 20px;">
+            <div id="left-buttons">
+                <!-- Left-side buttons can be added here if needed -->
+            </div>
+
+            <div id="right-buttons" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+                
+                <button class="button" id="speed-toggle">1.0x</button>
+                <button class="button" id="rewind-3" title="Rewind 3 Seconds" aria-label="Rewind 3 Seconds">-3s</button>
+				
+				
+				
+                <button class="button" id="play-pause" title="Play/Pause" aria-label="Play or Pause">▶</button>
+                
+                <!-- Cont./Loop Mode Button and Mode Indicator Light -->
+                <button class="button" id="cont-loop-toggle" title="Toggle Continuous/Loop Mode" aria-label="Toggle Continuous or Loop Mode">Cont.</button>
+                <span id="mode-indicator" class="mode-indicator" title="Current Mode Indicator" role="status" aria-label="Current Mode Indicator"></span>
+                
+                <button class="button" id="next-snippet" title="Next Snippet" aria-label="Next Snippet">+</button>
+                <button class="button" id="last-snippet" title="Previous Snippet" aria-label="Previous Snippet">-</button>
+                <button class="button" id="forward-3" title="Forward 3 Seconds" aria-label="Forward 3 Seconds">+3s</button>
+                
+                <button class="button" id="font-toggle" title="Toggle Font Size" aria-label="Toggle Font Size">F</button>
+				
+				    <button class="button" id="pause-toggle" title="Pause Between Snippets" aria-label="Pause Between Snippets">P0</button>
+
+
+            </div>
+
+            <div id="bottom-buttons">
+                <!-- Bottom-side buttons can be added here if needed -->
+            </div>
+        </section>
+
+        <!-- Lesson Display Area -->
+
+        
+        <div id="lesson-display"></div>
+
+
+
+        <!-- Remove the iframe as it's not used in the JavaScript -->
+        <!--
+        <section id="lesson-content">
+            <iframe id="lesson-frame" src="" frameborder="0"></iframe>
+        </section>
+        -->
+
+        <!-- Landscape Controls -->
+        <!--div id="landscape-controls" style="display: none; margin-top: 20px;">
+           <div class="slider-container">
+                <label for="speed-slider-landscape">Playback Speed</label>
+                <input type="range" id="speed-slider-landscape" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="Playback Speed Landscape">
+                <span id="speed-value-landscape" style="font-size:12px">1.0x</span>
+            </div>
+
+            <button class="button" id="play-pause-landscape" title="Play/Pause" aria-label="Play or Pause Landscape">▶</button>
+            <button class="button" id="next-snippet-landscape" title="Next Snippet" aria-label="Next Snippet Landscape">⏭️</button>
+            <button class="button" id="last-snippet-landscape" title="Previous Snippet" aria-label="Previous Snippet Landscape">⏮️</button>
+        </div-->
+    </main>
+
+	
+<!-- Modal for initial file selection -->
+<div id="initial-file-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close-button" id="close-initial-modal">&times;</span>
+    <h2>Select an audio file</h2>
+	<p>... and click "Load Audio".</p>
+    <!--p>...from the 1) server list or from your 2) local drive . Then click "Load MP3".</p-->
+    
+
+
+    <div style="margin-bottom: 20px;">
+      <!--label for="server-mp3-list">1. Choose an online MP3:</label-->
+      <select id="server-mp3-list">
+        <option value="">Select a file</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique001.mp3">GigaMartinique 001</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique002.mp3">GigaMartinique 002</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique003.mp3">GigaMartinique 003</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique004.mp3">GigaMartinique 004</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique005.mp3">GigaMartinique 005</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique006.mp3">GigaMartinique 006</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique008.mp3">GigaMartinique 008</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique009.mp3">GigaMartinique 009</option>
+        <option value="https://aiopop.com/kangaroo/M/GigaMartinique010.mp3">GigaMartinique 010</option>
+
+     </select>
+    </div>
+	
+	    <div style="margin-bottom: 20px;">
+      <!--label for="initial-audio-file">2. Load from local drive:</label-->
+      <input type="hidden" id="initial-audio-file" accept=".mp3,.wav,.ogg">
+    </div>
+    
+    <button id="load-selected-mp3" class="button" style="font-size:16px">Load Audio</button>
+  </div>
+</div>
+
+<!--	
+
+    <script src="creole_snp.js"></script>
+    <script src="creole_txt.js"></script>
+-->
+	    <script src="GigaMartinique_snp.js"></script>
+    <script src="GigaMartinique_txt.js"></script>
+    <script src="kangaroo_script.js"></script>
+</body>
+</html>
